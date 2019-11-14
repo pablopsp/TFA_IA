@@ -5,13 +5,15 @@ import time
 from threading import Thread
 from bs4 import BeautifulSoup
 
-
+#devuelve una list de urls pasandole el valor del url del indice bursatil que se quiera
 def GetUrlsFrom(indiceBursatil):
     companies_page = requests.get('https://www.eleconomista.es/indice/' + indiceBursatil).text
     soup = BeautifulSoup(companies_page, 'lxml')
     companies = soup.find_all('td', {'class' : 'footable-first-visible'})
     return companies
 
+#devuelve toda la data de las tablas de cada compañia y las guarda en una lis(dict(string, list))
+#si quieres sacar mas o menos valores solo hay que cambiar el valor de la i en el while
 data = []
 def GetData(companie):
     link = companie.find('a')['href']
@@ -33,7 +35,10 @@ def GetData(companie):
         i = i+1
         
     data.append({'brand': each_soup.find('h1').text, 'data': df.values.tolist()})
+    data.sort(key=lambda companie: companie['brand'])
 
+
+#mete todos los valores de data 'lis(dict(string, list))' en un excell
 def ToExcell():
     writer = pd.ExcelWriter('Ibex35Data.xlsx', engine = 'xlsxwriter')
     for company in (companies for companies in data):
@@ -44,12 +49,17 @@ def ToExcell():
     writer.save()
 
 
-start_time = time.time()
-threadlist = []
-for companie in GetUrlsFrom("Ibex-35"):
-    t = Thread(target=GetData, args =(companie,))
-    t.start()
-    threadlist.append(t)
-    
-[thread.join() for thread in threadlist]
-print("--- %s seconds ---" % (time.time() - start_time))
+#main function, con threads para que tarde menos +- 4 minutos con 35 valores de i
+def main():
+    start_time = time.time()
+    threadlist = []
+    for companie in GetUrlsFrom("Ibex-35"):
+        t = Thread(target=GetData, args =(companie,))
+        t.start()
+        threadlist.append(t)    
+    [thread.join() for thread in threadlist]
+    ToExcell()
+    print("--- %s seconds ---" % (time.time() - start_time))
+
+if __name__ == "__main__":
+    main()
