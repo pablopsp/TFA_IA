@@ -25,7 +25,7 @@ def GetData(companie):
     df = pd.DataFrame(columns=('Fecha','Cierre','Var.(€)','Var.(%)','Máx','Mín','Volumen(€)'))
 
     i=0
-    while i < 35:
+    while i < 120:
         for table in each_soup.find_all('tbody'):    
             for tr in table.findChildren(['tr']):
                 eachTr_tdData = [i.text for i in tr.find_all('td')][0:7]
