@@ -25,7 +25,7 @@ def GetData(companie):
     each_soup = BeautifulSoup(each_page, 'lxml')   
     
     df = pd.DataFrame(columns=('Fecha','Cierre','Var.(€)','Var.(%)','Máx','Mín','Volumen(€)'))
-    dfNoticias = pd.DataFrame(columns=('Fecha', 'Noticia'))
+    dfNoticias = pd.DataFrame(columns=('Fecha', 'Noticia', 'Texto'))
     i=0
     while i < 1:
         for table in each_soup.find_all('tbody'):    
@@ -50,7 +50,7 @@ def GetData(companie):
                         paragraphs = soupArticle.find('div', {'class': 'Article__paragraphGroup'})
                         if paragraphs is not None:
                             paragraphs.find_all('p')
-                            dfNoticias.loc[len(dfNoticias)] = eachTr_tdData[0] , article
+                            dfNoticias.loc[len(dfNoticias)] = eachTr_tdData[0] , article, paragraphs
                 else:
                     continue
                                  
@@ -72,9 +72,10 @@ def ToExcell():
         df.to_excel(writer, sheet_name = company['brand'].split(',')[0][:30])
         
         dfN = pd.DataFrame(company['noticias'])
-        dfN.columns = ['Fecha', 'Article']
+        dfN.columns = ['Fecha', 'Article', 'Texto']
         dfN.to_excel(writerN, sheet_name = company['brand'].split(',')[0][:30])
     writer.save()
+    writerN.save()
 
 #main function, con threads para que tarde menos +- 4 minutos con 35 valores de i
 def main():
