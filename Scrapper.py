@@ -27,30 +27,35 @@ def GetData(companie):
     df = pd.DataFrame(columns=('Fecha','Cierre','Var.(€)','Var.(%)','Máx','Mín','Volumen(€)'))
     dfNoticias = pd.DataFrame(columns=('Fecha', 'Noticia', 'Texto'))
     i=0
-    while i < 1:
+    while i < 120:
         for table in each_soup.find_all('tbody'):    
             for tr in table.findChildren(['tr']):
                 eachTr_tdData = [i.text for i in tr.find_all('td')][0:7]
                 df.loc[len(df)] = eachTr_tdData
                 
                 tr_href = tr.find_all('td')[7]
-                link_notice = tr_href.find_next('a', href=True)['href']
 
-                if link_notice is not None:
-                    eachTr_noticia = link_notice
-                    print(link_notice)
 
-                    response = requests.get(domain + eachTr_noticia).text
+                if tr_href.text != '-':  
+                    link_notices = tr_href.find('a')['href']
+                    response = requests.get(domain + link_notices).text
                     soup = BeautifulSoup(response, 'lxml')
                     articleLinks = soup.find_all('a', {'class': 'articleLink'})
-                        
+                                
                     for article in articleLinks:
                         resp = requests.get(domain + article['href']).text
                         soupArticle = BeautifulSoup(resp, 'lxml')
                         paragraphs = soupArticle.find('div', {'class': 'Article__paragraphGroup'})
+                                
+                        texto = []
                         if paragraphs is not None:
-                            paragraphs.find_all('p')
-                            dfNoticias.loc[len(dfNoticias)] = eachTr_tdData[0] , article, paragraphs
+                            for x in paragraphs.find_all('p'):
+                                texto.append(x.text)
+                                        
+                            texto = list(filter(None, texto))
+                            txt = ''.join(texto)
+                                    
+                            dfNoticias.loc[len(dfNoticias)] = eachTr_tdData[0] , article['href'], txt
                 else:
                     continue
                                  
@@ -86,6 +91,7 @@ def main():
         t.start()
         threadlist.append(t)    
     [thread.join() for thread in threadlist]
+    
     ToExcell()
     print("--- %s seconds ---" % (time.time() - start_time))
 
