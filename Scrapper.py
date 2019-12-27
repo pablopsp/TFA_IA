@@ -28,7 +28,7 @@ def GetData(companie):
     dfNoticias = pd.DataFrame(columns=('Fecha', 'Noticia', 'Texto'))
     
     i=0
-    while i < 120:
+    while i < 50:
         for table in each_soup.find_all('tbody'):    
             for tr in table.findChildren(['tr']):
                 eachTr_tdData = [i.text for i in tr.find_all('td')][0:7]
