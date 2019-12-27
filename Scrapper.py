@@ -26,6 +26,7 @@ def GetData(companie):
     
     df = pd.DataFrame(columns=('Fecha','Cierre','Var.(€)','Var.(%)','Máx','Mín','Volumen(€)'))
     dfNoticias = pd.DataFrame(columns=('Fecha', 'Noticia', 'Texto'))
+    
     i=0
     while i < 120:
         for table in each_soup.find_all('tbody'):    
@@ -34,7 +35,6 @@ def GetData(companie):
                 df.loc[len(df)] = eachTr_tdData
                 
                 tr_href = tr.find_all('td')[7]
-
 
                 if tr_href.text != '-':  
                     link_notices = tr_href.find('a')['href']
@@ -68,8 +68,8 @@ def GetData(companie):
 
 #mete todos los valores de data 'lis(dict(string, list))' en un excell
 def ToExcell():
-    writer = pd.ExcelWriter('Ibex35Data.xlsx', engine = 'xlsxwriter')
-    writerN = pd.ExcelWriter('Ibex35Noticias.xlsx', engine = 'xlsxwriter')
+    writer = pd.ExcelWriter('data/Ibex35Data.xlsx', engine = 'xlsxwriter')
+    writerN = pd.ExcelWriter('data/Ibex35Noticias.xlsx', engine = 'xlsxwriter')
 
     for company in (companies for companies in data):
         df = pd.DataFrame(company['data'])
