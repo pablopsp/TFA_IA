@@ -25,7 +25,7 @@ def GetData(companie):
     each_soup = BeautifulSoup(each_page, 'lxml')   
     
     df = pd.DataFrame(columns=('Fecha','Cierre','Var.(€)','Var.(%)','Máx','Mín','Volumen(€)'))
-    dfNoticias = pd.DataFrame(columns=('Fecha', 'Noticia', 'Texto'))
+    dfNoticias = pd.DataFrame(columns=('Fecha', 'Noticia', 'Titulo', 'Texto'))
     
     i=0
     while i < 50:
@@ -45,6 +45,7 @@ def GetData(companie):
                     for article in articleLinks:
                         resp = requests.get(domain + article['href']).text
                         soupArticle = BeautifulSoup(resp, 'lxml')
+                        title = soupArticle.find('h1', {'class' : 'articleTitle'}).text
                         paragraphs = soupArticle.find('div', {'class': 'Article__paragraphGroup'})
                                 
                         texto = []
@@ -55,7 +56,7 @@ def GetData(companie):
                             texto = list(filter(None, texto))
                             txt = ''.join(texto)
                                     
-                            dfNoticias.loc[len(dfNoticias)] = eachTr_tdData[0] , article['href'], txt
+                            dfNoticias.loc[len(dfNoticias)] = eachTr_tdData[0] , article['href'], title, txt
                 else:
                     continue
                                  
@@ -77,10 +78,21 @@ def ToExcell():
         df.to_excel(writer, sheet_name = company['brand'].split(',')[0][:30])
         
         dfN = pd.DataFrame(company['noticias'])
-        dfN.columns = ['Fecha', 'Article', 'Texto']
+        dfN.columns = ['Fecha', 'Article', 'Titulo', 'Texto']
         dfN.to_excel(writerN, sheet_name = company['brand'].split(',')[0][:30])
     writer.save()
     writerN.save()
+
+#mirarlo bien, formatear empresa1: [valor1 {}, valor2{}, empresa2: [valor1 {}, valor2{}]
+def ToJSON():
+    for company in (companies for companies in data):
+        df = pd.DataFrame(company['data'])
+        df.columns = ['Fecha','Cierre','Var.(€)','Var.(%)','Máx','Mín','Volumen(€)']
+        df.to_json('data/Ibex35Data.json', orient='index')
+        
+        dfN = pd.DataFrame(company['noticias'])
+        dfN.columns = ['Fecha', 'Article', 'Titulo', 'Texto']
+        dfN.to_json('data/Ibex35Noticias.json', orient='index')
 
 #main function, con threads para que tarde menos +- 4 minutos con 35 valores de i
 def main():
@@ -93,6 +105,7 @@ def main():
     [thread.join() for thread in threadlist]
     
     ToExcell()
+    #ToJSON()
     print("--- %s seconds ---" % (time.time() - start_time))
 
 if __name__ == "__main__":
