@@ -25,63 +25,39 @@ def GetData(companie):
     each_soup = BeautifulSoup(each_page, 'lxml')   
     
     df = pd.DataFrame(columns=('Fecha','Cierre','Var.(€)','Var.(%)','Máx','Mín','Volumen(€)'))
-    dfNoticias = pd.DataFrame(columns=('Fecha', 'Noticia', 'Texto'))
     
     i=0
-    while i < 120:
+    while i < 200:
         for table in each_soup.find_all('tbody'):    
             for tr in table.findChildren(['tr']):
                 eachTr_tdData = [i.text for i in tr.find_all('td')][0:7]
                 df.loc[len(df)] = eachTr_tdData
-                
-                tr_href = tr.find_all('td')[7]
-
-                if tr_href.text != '-':  
-                    link_notices = tr_href.find('a')['href']
-                    response = requests.get(domain + link_notices).text
-                    soup = BeautifulSoup(response, 'lxml')
-                    articleLinks = soup.find_all('a', {'class': 'articleLink'})
-                                
-                    for article in articleLinks:
-                        resp = requests.get(domain + article['href']).text
-                        soupArticle = BeautifulSoup(resp, 'lxml')
-                        paragraphs = soupArticle.find('div', {'class': 'Article__paragraphGroup'})
-                                
-                        texto = []
-                        if paragraphs is not None:
-                            for x in paragraphs.find_all('p'):
-                                texto.append(x.text)
-                                        
-                            texto = list(filter(None, texto))
-                            txt = ''.join(texto)
-                                    
-                            dfNoticias.loc[len(dfNoticias)] = eachTr_tdData[0] , article['href'], txt
-                else:
-                    continue
                                  
         each_soup = BeautifulSoup(requests.get(domain + each_soup.find('a', {'class':'page-link'})['href']).text, 'lxml')
         i = i+1
         
-    data.append({'brand': each_soup.find('h1').text, 'data': df.values.tolist(), 'noticias' : dfNoticias.values.tolist()})
+    data.append({'brand': each_soup.find('h1').text, 'data': df.values.tolist()})
     data.sort(key=lambda companie: companie['brand'])
 
 
 #mete todos los valores de data 'lis(dict(string, list))' en un excell
 def ToExcell():
     writer = pd.ExcelWriter('data/Ibex35Data.xlsx', engine = 'xlsxwriter')
-    writerN = pd.ExcelWriter('data/Ibex35Noticias.xlsx', engine = 'xlsxwriter')
 
     for company in (companies for companies in data):
         df = pd.DataFrame(company['data'])
         df.columns = ['Fecha','Cierre','Var.(€)','Var.(%)','Máx','Mín','Volumen(€)']
         df.to_excel(writer, sheet_name = company['brand'].split(',')[0][:30])
-        
-        dfN = pd.DataFrame(company['noticias'])
-        dfN.columns = ['Fecha', 'Article', 'Texto']
-        dfN.to_excel(writerN, sheet_name = company['brand'].split(',')[0][:30])
     writer.save()
-    writerN.save()
 
+
+#mirar esto
+def ToJSON():
+    for company in (companies for companies in data):
+        df = pd.DataFrame(company['data'])
+        df.columns = ['Fecha','Cierre','Var.(€)','Var.(%)','Máx','Mín','Volumen(€)']
+        df.to_json('data/Ibex35Data.json', orient='index')
+        
 #main function, con threads para que tarde menos +- 4 minutos con 35 valores de i
 def main():
     start_time = time.time()
