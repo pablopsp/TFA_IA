@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 import time
+import json
 
 from threading import Thread
 from bs4 import BeautifulSoup
@@ -51,14 +52,11 @@ def ToExcell():
     writer.save()
 
 
-#mirar esto
 def ToJSON():
-    for company in (companies for companies in data):
-        df = pd.DataFrame(company['data'])
-        df.columns = ['Fecha','Cierre','Var.(€)','Var.(%)','Máx','Mín','Volumen(€)']
-        df.to_json('data/Ibex35Data.json', orient='index')
+    with open('data/Ibex35Data.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=3)
         
-#main function, con threads para que tarde menos +- 4 minutos con 35 valores de i
+#main function, con threads para que tarde menos +- 25 minutos con 270 valores de i
 def main():
     start_time = time.time()
     threadlist = []
@@ -69,6 +67,7 @@ def main():
     [thread.join() for thread in threadlist]
     
     ToExcell()
+    ToJSON()
     print("--- %s seconds ---" % (time.time() - start_time))
 
 if __name__ == "__main__":
