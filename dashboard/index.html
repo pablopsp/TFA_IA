@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="index.css" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="dashboard">
+        <!-- select que se carguen desde js todos los companie name -->
+        <select class="slct_comp form-control"></select>
+
+        <div class="data_tbl">
+          <ul>
+            <li>Chart</li>
+            <li>Raw Data</li>
+          </ul>
+          <div class="chrt_data">
+            <canvas id="chart"></canvas>
+            <!-- chartjs con los datos -->
+          </div>
+          <div class="cntent_data">
+            <!-- todos los datos, pero que vayan cargando al hacer scroll-->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  </body>
+</html>

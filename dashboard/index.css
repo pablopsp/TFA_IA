@@ -1,0 +1,38 @@
+select {
+    text-align-last: center;
+    text-align: center;
+    -ms-text-align-last: center;
+    -moz-text-align-last: center;
+    font-weight: bold;
+}
+
+option {
+    color: black;
+    font-weight: bold;
+}
+
+.dashboard {
+    width: 100%;
+    height: 100%;
+
+    /*margin-top: 3%; */
+}
+
+.slct_comp {
+    border-radius: 10px !important;
+    margin-bottom: 3px;
+}
+
+.data_tbl > ul{
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 10px;
+    list-style: none;
+    display: inline-flex;
+    margin-bottom: 0;
+}
+
+li{
+    padding-left: 30px;
+    cursor: pointer;
+}
