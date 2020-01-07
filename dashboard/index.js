@@ -1,6 +1,16 @@
 var data;
 const select = document.querySelector("select");
 
+window.addEventListener(
+    'scroll',
+    () => {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+            moreData();
+         }
+    },
+    false
+);
+
 fetch("../data/Ibex35Data.json")
     .then(response => response.json())
     .then(json => {
@@ -30,7 +40,7 @@ const dataForChart = () => {
 var chart;
 const createChart = () => {
     var ctx = document.getElementById("chart").getContext("2d");
-     chart = new Chart(ctx, {
+    chart = new Chart(ctx, {
         type: "line",
         data: {
             labels: dataForChart().map(v => {
@@ -59,11 +69,78 @@ const createChart = () => {
                 })
             }]
         },
-        options: {}
+        options: {
+            animation: false
+        }
     });
 };
 
 select.addEventListener("change", () => {
     chart.destroy();
-    createChart();
+    seeChart();
 });
+
+const seeChart = () => {
+    if (document.querySelector("table") != undefined)
+        document.querySelector("table").remove();
+    createChart();
+};
+
+const seeRawData = () => {
+    chart.destroy();
+
+    const cntent_data = document.querySelector(".cntent_data");
+
+    const obj = data[document.querySelector("select").selectedIndex].data;
+    const trs = Object.keys(obj.slice(0,14)).map(function (key) {
+        return trTemplate(obj[key]);
+    }).join("");
+
+    const table =
+        `<table>
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Cierre</th>
+                <th>Var. (€)</th>
+                <th>Var. (%)</th>
+                <th>Máx</th>
+                <th>Mín</th>
+                <th>Volumen (€)</th>
+            </tr>
+            </thead>
+            <tbody class="bordered">
+                ${trs}
+            </tbody>
+        </table>
+    `;
+    document.querySelector(".chrt_data").style.height = "10px";
+    cntent_data.innerHTML = table;
+}
+
+const moreData = () => {
+    const obj = data[document.querySelector("select").selectedIndex].data;
+
+    const trLength = document.querySelectorAll("tr").length;
+    if(trLength != 0){
+        const trs = Object.keys(obj.slice(0, trLength+14)).map(function(key) {
+            return trTemplate(obj[key]);
+        }).join("");
+        document.querySelector(".bordered").innerHTML = trs;
+    }
+};
+
+
+const trTemplate = (values) => {
+    return `
+        <tr>
+            <td>${values[0]}</td>
+            <td>${values[1]}</td>
+            <td>${values[2]}</td>
+            <td>${values[3]}</td>
+            <td>${values[4]}</td>
+            <td>${values[5]}</td>
+            <td>${values[6]}</td>
+        </tr>
+    `;
+}

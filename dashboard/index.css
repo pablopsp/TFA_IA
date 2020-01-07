@@ -14,8 +14,10 @@ option {
 .dashboard {
     width: 100%;
     height: 100%;
+}
 
-    /*margin-top: 3%; */
+canvas{
+    height: 100%;
 }
 
 .slct_comp {
@@ -23,7 +25,7 @@ option {
     margin-bottom: 3px;
 }
 
-.data_tbl > ul{
+.data_tbl>ul {
     width: 100%;
     border: 1px solid black;
     border-radius: 10px;
@@ -32,7 +34,33 @@ option {
     margin-bottom: 0;
 }
 
-li{
+li {
     padding-left: 30px;
     cursor: pointer;
+}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 1em;
+    overflow: hidden;
+}
+
+td,
+th {
+    padding: 1em;
+    background: rgba(55,172,192,0.15);
+    border-bottom: 1px solid #fff; 
+    text-align: center !important;
+    color: rgb(7, 62, 71)
+}
+
+tr{
+    border-radius: 20px;
+}
+
+.bordered tr:hover {
+    background: rgba(75,192,192,0.4);
+    transition: all 0.1s ease-in-out;
 }
