@@ -22,23 +22,33 @@ canvas{
 
 .slct_comp {
     border-radius: 10px !important;
+    margin-top: 8px;
     margin-bottom: 3px;
 }
 
 .data_tbl>ul {
     width: 100%;
-    border: 1px solid black;
     border-radius: 10px;
     list-style: none;
-    display: inline-flex;
-    margin-bottom: 0;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    text-align: center;
+    padding: 0;
 }
 
 li {
-    padding-left: 30px;
+    display: inline-block;
+    padding: 10px;
     cursor: pointer;
+    font-weight: bold;
+    border: 1px solid rgba(4, 80, 80, 0.5);
+    background-color: rgba(75,192,192,0.2);
+    color: rgb(19, 70, 70)
 }
 
+li:hover{
+    background-color: rgba(28, 138, 138, 0.4);
+}
 
 table {
     width: 100%;
@@ -61,6 +71,6 @@ tr{
 }
 
 .bordered tr:hover {
-    background: rgba(75,192,192,0.4);
+    background: rgba(28, 138, 138, 0.2);
     transition: all 0.1s ease-in-out;
 }

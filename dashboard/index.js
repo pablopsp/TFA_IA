@@ -26,6 +26,7 @@ fetch("../data/Ibex35Data.json")
 
 const dataForChart = () => {
     arr = [];
+    
     obj = data[document.querySelector("select").selectedIndex].data;
     Object.keys(obj).forEach(function (key) {
         var obje = new Object();
@@ -34,7 +35,7 @@ const dataForChart = () => {
         (jsonString = JSON.stringify(obje));
         arr.push(obje);
     });
-    return arr;
+    return arr.reverse();
 };
 
 var chart;
@@ -92,7 +93,7 @@ const seeRawData = () => {
     const cntent_data = document.querySelector(".cntent_data");
 
     const obj = data[document.querySelector("select").selectedIndex].data;
-    const trs = Object.keys(obj.slice(0,14)).map(function (key) {
+    const trs = Object.keys(obj.slice(0,24)).map(function (key) {
         return trTemplate(obj[key]);
     }).join("");
 
@@ -123,7 +124,7 @@ const moreData = () => {
 
     const trLength = document.querySelectorAll("tr").length;
     if(trLength != 0){
-        const trs = Object.keys(obj.slice(0, trLength+14)).map(function(key) {
+        const trs = Object.keys(obj.slice(0, trLength+24)).map(function(key) {
             return trTemplate(obj[key]);
         }).join("");
         document.querySelector(".bordered").innerHTML = trs;
